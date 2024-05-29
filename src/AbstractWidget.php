@@ -11,26 +11,26 @@ namespace DouglasGreen\PageMaker;
  */
 abstract class AbstractWidget implements Widget
 {
-    protected static $validTags = ['article', 'aside', 'div', 'nav', 'section'];
+    protected static array $validTags = ['article', 'aside', 'div', 'nav', 'section'];
 
     protected string $tag;
 
-    protected $scripts = [];
+    protected array $scripts = [];
 
-    protected $styles = [];
+    protected array $styles = [];
 
     /**
      * @var string Semantic version of this class and its CSS/JS files
      */
-    protected $version = '0.1.0';
+    protected string $version = '0.1.0';
 
     public function __construct(
         protected string $name,
-        string $tag,
+        protected string $tag,
         protected string $class,
         protected ?array $data = null
     ) {
-        $this->tag = strtolower($tag);
+        $this->tag = strtolower($this->tag);
         if (! in_array($this->tag, self::$validTags, true)) {
             $validTags = implode(', ', self::$validTags);
             throw new Exception('Bad tag; should be one of: ' . $validTags);

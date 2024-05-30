@@ -1,84 +1,89 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DouglasGreen\PageMaker\Tests;
 
 use DouglasGreen\Exceptions\ValueException;
 use DouglasGreen\PageMaker\Widget;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class WidgetTest extends TestCase
 {
-    public function testConstructorValidData()
+    public function testConstructorValidData(): void
     {
         $widget = new Widget('MyWidget', '1.0.0', 'div', 'my-widget-class');
         $this->assertInstanceOf(Widget::class, $widget);
     }
 
-    public function testConstructorInvalidName()
+    public function testConstructorInvalidName(): void
     {
         $this->expectException(ValueException::class);
         $this->expectExceptionMessage('Missing name');
         new Widget('', '1.0.0', 'div', 'my-widget-class');
     }
 
-    public function testConstructorInvalidVersion()
+    public function testConstructorInvalidVersion(): void
     {
         $this->expectException(ValueException::class);
         $this->expectExceptionMessage('Invalid semantic version: invalid_version');
         new Widget('MyWidget', 'invalid_version', 'div', 'my-widget-class');
     }
 
-    public function testConstructorInvalidTag()
+    public function testConstructorInvalidTag(): void
     {
         $this->expectException(ValueException::class);
         $this->expectExceptionMessage('Bad tag; should be one of: article, aside, div, nav, section');
         new Widget('MyWidget', '1.0.0', 'invalid_tag', 'my-widget-class');
     }
 
-    public function testConstructorInvalidClass()
+    public function testConstructorInvalidClass(): void
     {
         $this->expectException(ValueException::class);
         $this->expectExceptionMessage('Invalid class name: invalid class');
         new Widget('MyWidget', '1.0.0', 'div', 'invalid class');
     }
 
-    public function testGetClass()
+    public function testGetClass(): void
     {
         $widget = new Widget('MyWidget', '1.0.0', 'div', 'my-widget-class');
-        $this->assertEquals('my-widget-class', $widget->getClass());
+        $this->assertSame('my-widget-class', $widget->getClass());
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $widget = new Widget('MyWidget', '1.0.0', 'div', 'my-widget-class');
-        $this->assertEquals('MyWidget', $widget->getName());
+        $this->assertSame('MyWidget', $widget->getName());
     }
 
-    public function testGetScripts()
+    public function testGetScripts(): void
     {
         $widget = new Widget('MyWidget', '1.0.0', 'div', 'my-widget-class');
         $this->assertIsArray($widget->getScripts());
     }
 
-    public function testGetStyles()
+    public function testGetStyles(): void
     {
         $widget = new Widget('MyWidget', '1.0.0', 'div', 'my-widget-class');
         $this->assertIsArray($widget->getStyles());
     }
 
-    public function testGetTag()
+    public function testGetTag(): void
     {
         $widget = new Widget('MyWidget', '1.0.0', 'div', 'my-widget-class');
-        $this->assertEquals('div', $widget->getTag());
+        $this->assertSame('div', $widget->getTag());
     }
 
-    public function testGetVersion()
+    public function testGetVersion(): void
     {
         $widget = new Widget('MyWidget', '1.0.0', 'div', 'my-widget-class');
-        $this->assertEquals('1.0.0', $widget->getVersion());
+        $this->assertSame('1.0.0', $widget->getVersion());
     }
 
-    public function testHasScript()
+    public function testHasScript(): void
     {
         $widget = new Widget('MyWidget', '1.0.0', 'div', 'my-widget-class');
         $this->assertFalse($widget->hasScript('script1'));
@@ -86,7 +91,7 @@ class WidgetTest extends TestCase
         $this->assertTrue($widget->hasScript('script1'));
     }
 
-    public function testHasStyle()
+    public function testHasStyle(): void
     {
         $widget = new Widget('MyWidget', '1.0.0', 'div', 'my-widget-class');
         $this->assertFalse($widget->hasStyle('style1'));
@@ -94,14 +99,16 @@ class WidgetTest extends TestCase
         $this->assertTrue($widget->hasStyle('style1'));
     }
 
-    public function testSetScript()
+    public function testSetScript(): void
     {
         $widget = new Widget('MyWidget', '1.0.0', 'div', 'my-widget-class');
         $widget->setScript('script1', 'src1');
-        $this->assertEquals(['script1' => 'src1'], $widget->getScripts());
+        $this->assertSame([
+            'script1' => 'src1',
+        ], $widget->getScripts());
     }
 
-    public function testSetScriptAlreadySet()
+    public function testSetScriptAlreadySet(): void
     {
         $this->expectException(ValueException::class);
         $this->expectExceptionMessage('Script "script1" already set: "src1"');
@@ -110,14 +117,16 @@ class WidgetTest extends TestCase
         $widget->setScript('script1', 'src2');
     }
 
-    public function testSetStyle()
+    public function testSetStyle(): void
     {
         $widget = new Widget('MyWidget', '1.0.0', 'div', 'my-widget-class');
         $widget->setStyle('style1', 'href1');
-        $this->assertEquals(['style1' => 'href1'], $widget->getStyles());
+        $this->assertSame([
+            'style1' => 'href1',
+        ], $widget->getStyles());
     }
 
-    public function testSetStyleAlreadySet()
+    public function testSetStyleAlreadySet(): void
     {
         $this->expectException(ValueException::class);
         $this->expectExceptionMessage('Style "style1" already set: "href1"');

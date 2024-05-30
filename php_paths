@@ -2,3 +2,4 @@ ecs.php
 phpunit_bootstrap.php
 rector.php
 src
+tests

@@ -57,7 +57,7 @@ class Widget
             throw new ValueException('Bad tag; should be one of: ' . $validTags);
         }
 
-        if (preg_match('/^\\w+$/', $this->class) === 0) {
+        if (preg_match('/^\\w+(-\\w+)*$/', $this->class) === 0) {
             throw new ValueException('Invalid class name: ' . $this->class);
         }
     }

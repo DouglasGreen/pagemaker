@@ -52,6 +52,57 @@ class Page
         protected ?string $favicon = null
     ) {}
 
+    public function getCharset(): string
+    {
+        return $this->charset;
+    }
+
+    public function getFavicon(): ?string
+    {
+        return $this->favicon;
+    }
+
+    public function getLang(): string
+    {
+        return $this->lang;
+    }
+
+    public function getMeta(string $name): ?string
+    {
+        return $this->metadata['http-equiv'][$name] ?? $this->metadata['name'][$name] ?? null;
+    }
+
+    /**
+     * @return array{src: string, version: string}
+     */
+    public function getScript(string $scriptName): ?array
+    {
+        return $this->scripts[$scriptName] ?? null;
+    }
+
+    /**
+     * @return array{href: string, version: string}
+     */
+    public function getStyle(string $styleName): ?array
+    {
+        return $this->styles[$styleName] ?? null;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function hasScript(string $scriptName): bool
+    {
+        return isset($this->scripts[$scriptName]);
+    }
+
+    public function hasStyle(string $styleName): bool
+    {
+        return isset($this->styles[$styleName]);
+    }
+
     /**
      * @throws ValueException
      */
@@ -87,7 +138,7 @@ class Page
 
         if (isset($this->scripts[$scriptName])) {
             throw new ValueException(sprintf(
-                'Script "%s" already set to: "%s"',
+                'Script "%s" already set: "%s"',
                 $scriptName,
                 $this->scripts[$scriptName]['src']
             ));
@@ -117,7 +168,7 @@ class Page
 
         if (isset($this->styles[$styleName])) {
             throw new ValueException(sprintf(
-                'Style "%s" already set to: "%s"',
+                'Style "%s" already set: "%s"',
                 $styleName,
                 $this->styles[$styleName]['href']
             ));

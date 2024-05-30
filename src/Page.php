@@ -229,22 +229,21 @@ class Page
 
     protected function renderWidget(Widget $widget): string
     {
-        $widgetName = $widget->getName();
         $widgetTag = $widget->getTag();
         $widgetClass = $widget->getClass();
         $widgetVersion = $widget->getVersion();
 
         $content = sprintf('<%s class="%s">', $widgetTag, $widgetClass) . PHP_EOL;
 
-        // Scripts are qualified by their widget name to avoid conflict.
+        // Scripts are qualified by their widget class to avoid conflict.
         foreach ($widget->getScripts() as $scriptName => $src) {
-            $fullName = $widgetName . ucfirst($scriptName);
+            $fullName = $widgetClass . ucfirst($scriptName);
             $this->setScript($fullName, $src, $widgetVersion);
         }
 
-        // Styles are qualified by their widget name to avoid conflict.
+        // Styles are qualified by their widget class to avoid conflict.
         foreach ($widget->getStyles() as $styleName => $href) {
-            $fullName = $widgetName . ucfirst($styleName);
+            $fullName = $widgetClass . ucfirst($styleName);
             $this->setStyle($fullName, $href, $widgetVersion);
         }
 

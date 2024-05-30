@@ -47,7 +47,7 @@ class Widget
             throw new ValueException('Missing name');
         }
 
-        if (preg_match('/^\\d+\\.\\d+\\.\\d+$/', $this->version) === 0) {
+        if (preg_match('/^\\d+\\.\\d+(\\.\\d+)?$/', $this->version) === 0) {
             throw new ValueException('Invalid semantic version: ' . $this->version);
         }
 

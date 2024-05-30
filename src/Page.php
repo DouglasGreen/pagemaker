@@ -27,12 +27,12 @@ class Page
     ];
 
     /**
-     * @var array<string, string> Page scripts
+     * @var array<string, array{src: string, version: string}> Page scripts
      */
     protected $scripts = [];
 
     /**
-     * @var array<string, string> Page styles
+     * @var array<string, array{href: string, version: string}> Page styles
      */
     protected $styles = [];
 
@@ -71,36 +71,62 @@ class Page
     }
 
     /**
+     * Set a page script.
+     *
+     * Common scripts like jQuery should be added by calling this function
+     * directly. Scripts that are unique to each widget should be added using
+     * Widget::setScript() instead.
+     *
      * @throws ValueException
      */
-    protected function setScript(string $scriptName, string $src): self
+    public function setScript(string $scriptName, string $src, string $version): self
     {
+        if (preg_match('/^\\d+\\.\\d+(\\.\\d+)?$/', $version) === 0) {
+            throw new ValueException('Invalid semantic version: ' . $version);
+        }
+
         if (isset($this->scripts[$scriptName])) {
             throw new ValueException(sprintf(
                 'Script "%s" already set to: "%s"',
                 $scriptName,
-                $this->scripts[$scriptName]
+                $this->scripts[$scriptName]['src']
             ));
         }
 
-        $this->scripts[$scriptName] = $src;
+        $this->scripts[$scriptName] = [
+            'src' => $src,
+            'version' => $version,
+        ];
         return $this;
     }
 
     /**
+     * Set a page styles.
+     *
+     * Common styles like Bootstrap should be added by calling this function
+     * directly. Styles that are unique to each widget should be added using
+     * Widget::setStyle() instead.
+     *
      * @throws ValueException
      */
-    protected function setStyle(string $styleName, string $href): self
+    public function setStyle(string $styleName, string $href, string $version): self
     {
+        if (preg_match('/^\\d+\\.\\d+(\\.\\d+)?$/', $version) === 0) {
+            throw new ValueException('Invalid semantic version: ' . $version);
+        }
+
         if (isset($this->styles[$styleName])) {
             throw new ValueException(sprintf(
                 'Style "%s" already set to: "%s"',
                 $styleName,
-                $this->styles[$styleName]
+                $this->styles[$styleName]['href']
             ));
         }
 
-        $this->styles[$styleName] = $href;
+        $this->styles[$styleName] = [
+            'href' => $href,
+            'version' => $version,
+        ];
         return $this;
     }
 
@@ -150,11 +176,13 @@ class Page
         }
 
         foreach ($this->styles as $style) {
-            $output .= sprintf('<link rel="stylesheet" type="text/css" href="%s">', $style) . PHP_EOL;
+            $href = $this->addVersion($style['href'], $style['version']);
+            $output .= sprintf('<link rel="stylesheet" type="text/css" href="%s">', $href) . PHP_EOL;
         }
 
         foreach ($this->scripts as $script) {
-            $output .= sprintf('<script src="%s"></script>', $script) . PHP_EOL;
+            $src = $this->addVersion($script['src'], $script['version']);
+            $output .= sprintf('<script src="%s"></script>', $src) . PHP_EOL;
         }
 
         return $output . '</head>' . PHP_EOL;
@@ -167,6 +195,17 @@ class Page
         $output .= $this->renderSection('main', 'pageMakerMain');
         $output .= $this->renderSection('footer', 'pageMakerFooter');
         return $output . '</body>' . PHP_EOL;
+    }
+
+    protected function addVersion(string $url, string $version): string
+    {
+        if (! str_contains($url, '?')) {
+            $url .= '?version=' . urlencode($version);
+        } else {
+            $url .= '&version=' . urlencode($version);
+        }
+
+        return $url;
     }
 
     /**
@@ -193,17 +232,20 @@ class Page
         $widgetName = $widget->getName();
         $widgetTag = $widget->getTag();
         $widgetClass = $widget->getClass();
+        $widgetVersion = $widget->getVersion();
 
         $content = sprintf('<%s class="%s">', $widgetTag, $widgetClass) . PHP_EOL;
 
+        // Scripts are qualified by their widget name to avoid conflict.
         foreach ($widget->getScripts() as $scriptName => $src) {
             $fullName = $widgetName . ucfirst($scriptName);
-            $this->setScript($fullName, $src);
+            $this->setScript($fullName, $src, $widgetVersion);
         }
 
+        // Styles are qualified by their widget name to avoid conflict.
         foreach ($widget->getStyles() as $styleName => $href) {
             $fullName = $widgetName . ucfirst($styleName);
-            $this->setStyle($fullName, $href);
+            $this->setStyle($fullName, $href, $widgetVersion);
         }
 
         try {

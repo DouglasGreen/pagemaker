@@ -1,8 +1,36 @@
 {
-    "name": "douglasgreen/template",
+    "name": "douglasgreen/pagemaker",
     "description": "A project to build webpages in OOP style with a plug-in architecture",
     "license": "MIT",
     "type": "library",
+    "homepage": "https://github.com/douglasgreen/pagemaker",
+    "authors": [
+        {
+            "name": "Douglas Green",
+            "email": "douglas@nurd.site",
+            "homepage": "https://nurd.site/",
+            "role": "Developer"
+        }
+    ],
+    "keywords": [
+        "automation",
+        "best practices",
+        "boilerplate",
+        "code quality",
+        "code standards",
+        "code style",
+        "coding guidelines",
+        "configuration",
+        "development tools",
+        "linting",
+        "project linting",
+        "project templates",
+        "scaffolding",
+        "setup",
+        "starter kit",
+        "templates"
+    ],
+
     "autoload": {
         "files": [
             "src/Exceptions.php"

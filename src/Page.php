@@ -11,7 +11,7 @@ class Page
     /**
      * @var array<string, array<string, ?string>> Page metadata
      */
-    protected $metadata = [
+    protected array $metadata = [
         'http-equiv' => [
             'content-type' => null,
             'default-style' => null,
@@ -29,17 +29,17 @@ class Page
     /**
      * @var array<string, array{src: string, version: string}> Page scripts
      */
-    protected $scripts = [];
+    protected array $scripts = [];
 
     /**
      * @var array<string, array{href: string, version: string}> Page styles
      */
-    protected $styles = [];
+    protected array $styles = [];
 
     /**
-     * @var array<string, list<Widget>>
+     * @var array<string, list<AbstractWidget>>
      */
-    public array $widgets = [
+    protected array $widgets = [
         'header' => [],
         'main' => [],
         'footer' => [],
@@ -51,6 +51,24 @@ class Page
         protected string $charset = 'UTF-8',
         protected ?string $favicon = null
     ) {}
+
+    public function addFooterWidget(AbstractWidget $widget): self
+    {
+        $this->widgets['footer'][] = $widget;
+        return $this;
+    }
+
+    public function addHeaderWidget(AbstractWidget $widget): self
+    {
+        $this->widgets['header'][] = $widget;
+        return $this;
+    }
+
+    public function addMainWidget(AbstractWidget $widget): self
+    {
+        $this->widgets['main'][] = $widget;
+        return $this;
+    }
 
     public function getCharset(): string
     {
@@ -103,6 +121,15 @@ class Page
         return isset($this->styles[$styleName]);
     }
 
+    public function render(): string
+    {
+        $output = '<!DOCTYPE html>' . PHP_EOL;
+        $output .= sprintf('<html lang="%s">', $this->lang) . PHP_EOL;
+        $output .= $this->renderHead();
+        $output .= $this->renderBody();
+        return $output . '</html>' . PHP_EOL;
+    }
+
     /**
      * @throws ValueException
      */
@@ -126,7 +153,7 @@ class Page
      *
      * Common scripts like jQuery should be added by calling this function
      * directly. Scripts that are unique to each widget should be added using
-     * Widget::setScript() instead.
+     * AbstractWidget::setScript() instead.
      *
      * @throws ValueException
      */
@@ -156,7 +183,7 @@ class Page
      *
      * Common styles like Bootstrap should be added by calling this function
      * directly. Styles that are unique to each widget should be added using
-     * Widget::setStyle() instead.
+     * AbstractWidget::setStyle() instead.
      *
      * @throws ValueException
      */
@@ -181,31 +208,24 @@ class Page
         return $this;
     }
 
-    public function addHeaderWidget(Widget $widget): self
+    protected function addVersion(string $url, string $version): string
     {
-        $this->widgets['header'][] = $widget;
-        return $this;
+        if (! str_contains($url, '?')) {
+            $url .= '?version=' . urlencode($version);
+        } else {
+            $url .= '&version=' . urlencode($version);
+        }
+
+        return $url;
     }
 
-    public function addMainWidget(Widget $widget): self
+    protected function renderBody(): string
     {
-        $this->widgets['main'][] = $widget;
-        return $this;
-    }
-
-    public function addFooterWidget(Widget $widget): self
-    {
-        $this->widgets['footer'][] = $widget;
-        return $this;
-    }
-
-    public function render(): string
-    {
-        $output = '<!DOCTYPE html>' . PHP_EOL;
-        $output .= sprintf('<html lang="%s">', $this->lang) . PHP_EOL;
-        $output .= $this->renderHead();
-        $output .= $this->renderBody();
-        return $output . '</html>' . PHP_EOL;
+        $output = "<body id='pageMakerBody'>" . PHP_EOL;
+        $output .= $this->renderSection('header', 'pageMakerHeader');
+        $output .= $this->renderSection('main', 'pageMakerMain');
+        $output .= $this->renderSection('footer', 'pageMakerFooter');
+        return $output . '</body>' . PHP_EOL;
     }
 
     protected function renderHead(): string
@@ -239,26 +259,6 @@ class Page
         return $output . '</head>' . PHP_EOL;
     }
 
-    public function renderBody(): string
-    {
-        $output = "<body id='pageMakerBody'>" . PHP_EOL;
-        $output .= $this->renderSection('header', 'pageMakerHeader');
-        $output .= $this->renderSection('main', 'pageMakerMain');
-        $output .= $this->renderSection('footer', 'pageMakerFooter');
-        return $output . '</body>' . PHP_EOL;
-    }
-
-    protected function addVersion(string $url, string $version): string
-    {
-        if (! str_contains($url, '?')) {
-            $url .= '?version=' . urlencode($version);
-        } else {
-            $url .= '&version=' . urlencode($version);
-        }
-
-        return $url;
-    }
-
     /**
      * @throws ValueException
      */
@@ -278,7 +278,7 @@ class Page
         return $output . sprintf('</%s>', $sectionTag) . PHP_EOL;
     }
 
-    protected function renderWidget(Widget $widget): string
+    protected function renderWidget(AbstractWidget $widget): string
     {
         $widgetTag = $widget->getTag();
         $widgetClass = $widget->getClass();

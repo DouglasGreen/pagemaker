@@ -20,19 +20,19 @@ class PageTest extends TestCase
         $this->assertNull($page->getFavicon());
     }
 
-    public function testSetMetaValid(): void
-    {
-        $page = new Page('MyPage');
-        $page->setMeta('content-type', 'text/html');
-        $this->assertSame('text/html', $page->getMeta('content-type'));
-    }
-
     public function testSetMetaInvalid(): void
     {
         $this->expectException(ValueException::class);
         $this->expectExceptionMessage('Unrecognized name of meta tag attribute');
         $page = new Page('MyPage');
         $page->setMeta('invalid-meta', 'some content');
+    }
+
+    public function testSetMetaValid(): void
+    {
+        $page = new Page('MyPage');
+        $page->setMeta('content-type', 'text/html');
+        $this->assertSame('text/html', $page->getMeta('content-type'));
     }
 
     public function testSetScript(): void

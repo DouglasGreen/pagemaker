@@ -9,7 +9,7 @@ use DouglasGreen\Exceptions\ValueException;
 /**
  * A widget can extend this class.
  */
-class Widget
+abstract class AbstractWidget
 {
     /**
      * @var list<string>
@@ -27,11 +27,15 @@ class Widget
     protected array $styles = [];
 
     /**
+     * Subclass and override this function for custom widgets.
+     */
+    abstract public function render(): string;
+
+    /**
      * @param string $name Name of the widget
      * @param string $version Semantic version of this class and its CSS/JS files
      * @param string $tag One of the valid tags that contains the widget
      * @param string $class Class name that will be applied to the widget tag
-     * @param array<string, mixed> $data Data used to render the widget
      *
      * @throws ValueException
      */
@@ -40,7 +44,6 @@ class Widget
         protected string $version,
         protected string $tag,
         protected string $class,
-        protected array $data = []
     ) {
         $this->name = trim($this->name);
         if ($this->name === '') {
@@ -106,20 +109,6 @@ class Widget
     public function hasStyle(string $name): bool
     {
         return isset($this->styles[$name]);
-    }
-
-    /**
-     * Subclass and override this function for custom widgets.
-     */
-    public function render(): string
-    {
-        $output = 'Debug Mode<br>' . PHP_EOL;
-        foreach ($this->data as $key => $value) {
-            $output .= $key . ': ' . json_encode($value, JSON_THROW_ON_ERROR) . '<br>' .
-            PHP_EOL;
-        }
-
-        return $output;
     }
 
     public function setScript(string $name, string $src): self

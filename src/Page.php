@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DouglasGreen\PageMaker;
 
-use DouglasGreen\Exceptions\ValueException;
+use DouglasGreen\Utility\Exceptions\Data\ValueException;
 
 class Page
 {
@@ -49,7 +49,7 @@ class Page
         protected string $title,
         protected string $lang = 'en',
         protected string $charset = 'UTF-8',
-        protected ?string $favicon = null
+        protected ?string $favicon = null,
     ) {}
 
     public function addFooterWidget(AbstractWidget $widget): self
@@ -87,7 +87,8 @@ class Page
 
     public function getMeta(string $name): ?string
     {
-        return $this->metadata['http-equiv'][$name] ?? $this->metadata['name'][$name] ?? null;
+        return $this->metadata['http-equiv'][$name] ??
+            ($this->metadata['name'][$name] ?? null);
     }
 
     /**
@@ -157,18 +158,23 @@ class Page
      *
      * @throws ValueException
      */
-    public function setScript(string $scriptName, string $src, string $version): self
-    {
+    public function setScript(
+        string $scriptName,
+        string $src,
+        string $version,
+    ): self {
         if (preg_match('/^\\d+\\.\\d+(\\.\\d+)?$/', $version) === 0) {
             throw new ValueException('Invalid semantic version: ' . $version);
         }
 
         if (isset($this->scripts[$scriptName])) {
-            throw new ValueException(sprintf(
-                'Script "%s" already set: "%s"',
-                $scriptName,
-                $this->scripts[$scriptName]['src']
-            ));
+            throw new ValueException(
+                sprintf(
+                    'Script "%s" already set: "%s"',
+                    $scriptName,
+                    $this->scripts[$scriptName]['src'],
+                ),
+            );
         }
 
         $this->scripts[$scriptName] = [
@@ -187,18 +193,23 @@ class Page
      *
      * @throws ValueException
      */
-    public function setStyle(string $styleName, string $href, string $version): self
-    {
+    public function setStyle(
+        string $styleName,
+        string $href,
+        string $version,
+    ): self {
         if (preg_match('/^\\d+\\.\\d+(\\.\\d+)?$/', $version) === 0) {
             throw new ValueException('Invalid semantic version: ' . $version);
         }
 
         if (isset($this->styles[$styleName])) {
-            throw new ValueException(sprintf(
-                'Style "%s" already set: "%s"',
-                $styleName,
-                $this->styles[$styleName]['href']
-            ));
+            throw new ValueException(
+                sprintf(
+                    'Style "%s" already set: "%s"',
+                    $styleName,
+                    $this->styles[$styleName]['href'],
+                ),
+            );
         }
 
         $this->styles[$styleName] = [
@@ -237,18 +248,31 @@ class Page
         foreach ($this->metadata as $type => $values) {
             foreach ($values as $name => $content) {
                 if ($content !== null) {
-                    $output .= sprintf('<meta %s="%s" content="%s">', $type, $name, $content) . PHP_EOL;
+                    $output .=
+                        sprintf(
+                            '<meta %s="%s" content="%s">',
+                            $type,
+                            $name,
+                            $content,
+                        ) . PHP_EOL;
                 }
             }
         }
 
         if ($this->favicon !== null) {
-            $output .= sprintf('<link rel="icon" href="%s" type="image/x-icon">', $this->favicon);
+            $output .= sprintf(
+                '<link rel="icon" href="%s" type="image/x-icon">',
+                $this->favicon,
+            );
         }
 
         foreach ($this->styles as $style) {
             $href = $this->addVersion($style['href'], $style['version']);
-            $output .= sprintf('<link rel="stylesheet" type="text/css" href="%s">', $href) . PHP_EOL;
+            $output .=
+                sprintf(
+                    '<link rel="stylesheet" type="text/css" href="%s">',
+                    $href,
+                ) . PHP_EOL;
         }
 
         foreach ($this->scripts as $script) {
@@ -262,11 +286,15 @@ class Page
     /**
      * @throws ValueException
      */
-    protected function renderSection(string $sectionTag, string $sectionId): string
-    {
+    protected function renderSection(
+        string $sectionTag,
+        string $sectionId,
+    ): string {
         if (! $this->widgets[$sectionTag]) {
             $goodNames = implode(', ', array_keys($this->widgets));
-            throw new ValueException('Bad tag name; should be one of: ' . $goodNames);
+            throw new ValueException(
+                'Bad tag name; should be one of: ' . $goodNames,
+            );
         }
 
         $output = sprintf('<%s id="%s">', $sectionTag, $sectionId) . PHP_EOL;
@@ -284,7 +312,8 @@ class Page
         $widgetClass = $widget->getClass();
         $widgetVersion = $widget->getVersion();
 
-        $content = sprintf('<%s class="%s">', $widgetTag, $widgetClass) . PHP_EOL;
+        $content =
+            sprintf('<%s class="%s">', $widgetTag, $widgetClass) . PHP_EOL;
 
         // Scripts are qualified by their widget class to avoid conflict.
         foreach ($widget->getScripts() as $scriptName => $src) {
@@ -301,7 +330,10 @@ class Page
         try {
             $content .= $widget->render();
         } catch (\Throwable) {
-            $content .= '<p style="color: red">Error rendering ' . $widget->getName() . '</p>';
+            $content .=
+                '<p style="color: red">Error rendering ' .
+                $widget->getName() .
+                '</p>';
         }
 
         return $content . (sprintf('</%s>', $widgetTag) . PHP_EOL);

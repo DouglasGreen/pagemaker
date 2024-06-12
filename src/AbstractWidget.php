@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DouglasGreen\PageMaker;
 
-use DouglasGreen\Exceptions\ValueException;
+use DouglasGreen\Utility\Exceptions\Data\ValueException;
 
 /**
  * A widget can extend this class.
@@ -14,7 +14,13 @@ abstract class AbstractWidget
     /**
      * @var list<string>
      */
-    protected static array $validTags = ['article', 'aside', 'div', 'nav', 'section'];
+    protected static array $validTags = [
+        'article',
+        'aside',
+        'div',
+        'nav',
+        'section',
+    ];
 
     /**
      * @var array<string, string>
@@ -51,13 +57,17 @@ abstract class AbstractWidget
         }
 
         if (preg_match('/^\\d+\\.\\d+(\\.\\d+)?$/', $this->version) === 0) {
-            throw new ValueException('Invalid semantic version: ' . $this->version);
+            throw new ValueException(
+                'Invalid semantic version: ' . $this->version,
+            );
         }
 
         $this->tag = strtolower($this->tag);
         if (! in_array($this->tag, self::$validTags, true)) {
             $validTags = implode(', ', self::$validTags);
-            throw new ValueException('Bad tag; should be one of: ' . $validTags);
+            throw new ValueException(
+                'Bad tag; should be one of: ' . $validTags,
+            );
         }
 
         if (preg_match('/^\\w+(-\\w+)*$/', $this->class) === 0) {
@@ -114,7 +124,13 @@ abstract class AbstractWidget
     public function setScript(string $name, string $src): self
     {
         if (isset($this->scripts[$name])) {
-            throw new ValueException('Script "' . $name . '" already set: "' . $this->scripts[$name] . '"');
+            throw new ValueException(
+                'Script "' .
+                    $name .
+                    '" already set: "' .
+                    $this->scripts[$name] .
+                    '"',
+            );
         }
 
         $this->scripts[$name] = $src;
@@ -124,7 +140,13 @@ abstract class AbstractWidget
     public function setStyle(string $name, string $href): self
     {
         if (isset($this->styles[$name])) {
-            throw new ValueException('Style "' . $name . '" already set: "' . $this->styles[$name] . '"');
+            throw new ValueException(
+                'Style "' .
+                    $name .
+                    '" already set: "' .
+                    $this->styles[$name] .
+                    '"',
+            );
         }
 
         $this->styles[$name] = $href;

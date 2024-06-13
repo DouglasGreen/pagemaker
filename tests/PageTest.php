@@ -23,9 +23,7 @@ class PageTest extends TestCase
     public function testSetMetaInvalid(): void
     {
         $this->expectException(ValueException::class);
-        $this->expectExceptionMessage(
-            'Unrecognized name of meta tag attribute',
-        );
+        $this->expectExceptionMessage('Unrecognized name of meta tag attribute');
         $page = new Page('MyPage');
         $page->setMeta('invalid-meta', 'some content');
     }
@@ -40,11 +38,7 @@ class PageTest extends TestCase
     public function testSetScript(): void
     {
         $page = new Page('MyPage');
-        $page->setScript(
-            'jquery',
-            'https://code.jquery.com/jquery-3.6.0.min.js',
-            '3.6.0',
-        );
+        $page->setScript('jquery', 'https://code.jquery.com/jquery-3.6.0.min.js', '3.6.0');
         $this->assertTrue($page->hasScript('jquery'));
         $this->assertSame(
             [
@@ -62,16 +56,8 @@ class PageTest extends TestCase
             'Script "jquery" already set: "https://code.jquery.com/jquery-3.6.0.min.js"',
         );
         $page = new Page('MyPage');
-        $page->setScript(
-            'jquery',
-            'https://code.jquery.com/jquery-3.6.0.min.js',
-            '3.6.0',
-        );
-        $page->setScript(
-            'jquery',
-            'https://code.jquery.com/jquery-3.6.1.min.js',
-            '3.6.1',
-        );
+        $page->setScript('jquery', 'https://code.jquery.com/jquery-3.6.0.min.js', '3.6.0');
+        $page->setScript('jquery', 'https://code.jquery.com/jquery-3.6.1.min.js', '3.6.1');
     }
 
     public function testSetStyle(): void

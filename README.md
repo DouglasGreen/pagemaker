@@ -2,9 +2,11 @@
 
 A project to build webpages in OOP style with a plug-in architecture
 
-## Setup
+## Project setup
 
-See [Project Setup Guide](docs/setup_guide.md).
+Standard config files for linting and testing are copied into place from a GitHub repository called
+[config-setup](https://github.com/douglasgreen/config-setup). See that project's README page for
+details.
 
 ## Usage
 
@@ -12,10 +14,9 @@ The page builder provides a set of classes to assemble an HTML page.
 
 ## Installing assets
 
-Widgets are installed with composer to the vendor directory of your main
-project. Then you should copy their assets to the public/widgets/<name>
-directory with the name of your widget. You can do so with a simple Bash script
-in your main project like this:
+Widgets are installed with composer to the vendor directory of your main project. Then you should
+copy their assets to the public/widgets/<name> directory with the name of your widget. You can do so
+with a simple Bash script in your main project like this:
 
 ```bash
 #!/bin/bash

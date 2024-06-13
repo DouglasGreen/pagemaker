@@ -87,8 +87,7 @@ class Page
 
     public function getMeta(string $name): ?string
     {
-        return $this->metadata['http-equiv'][$name] ??
-            ($this->metadata['name'][$name] ?? null);
+        return $this->metadata['http-equiv'][$name] ?? ($this->metadata['name'][$name] ?? null);
     }
 
     /**
@@ -158,12 +157,9 @@ class Page
      *
      * @throws ValueException
      */
-    public function setScript(
-        string $scriptName,
-        string $src,
-        string $version,
-    ): self {
-        if (preg_match('/^\\d+\\.\\d+(\\.\\d+)?$/', $version) === 0) {
+    public function setScript(string $scriptName, string $src, string $version): self
+    {
+        if (preg_match('/^\d+\.\d+(\.\d+)?$/', $version) === 0) {
             throw new ValueException('Invalid semantic version: ' . $version);
         }
 
@@ -193,12 +189,9 @@ class Page
      *
      * @throws ValueException
      */
-    public function setStyle(
-        string $styleName,
-        string $href,
-        string $version,
-    ): self {
-        if (preg_match('/^\\d+\\.\\d+(\\.\\d+)?$/', $version) === 0) {
+    public function setStyle(string $styleName, string $href, string $version): self
+    {
+        if (preg_match('/^\d+\.\d+(\.\d+)?$/', $version) === 0) {
             throw new ValueException('Invalid semantic version: ' . $version);
         }
 
@@ -249,30 +242,19 @@ class Page
             foreach ($values as $name => $content) {
                 if ($content !== null) {
                     $output .=
-                        sprintf(
-                            '<meta %s="%s" content="%s">',
-                            $type,
-                            $name,
-                            $content,
-                        ) . PHP_EOL;
+                        sprintf('<meta %s="%s" content="%s">', $type, $name, $content) . PHP_EOL;
                 }
             }
         }
 
         if ($this->favicon !== null) {
-            $output .= sprintf(
-                '<link rel="icon" href="%s" type="image/x-icon">',
-                $this->favicon,
-            );
+            $output .= sprintf('<link rel="icon" href="%s" type="image/x-icon">', $this->favicon);
         }
 
         foreach ($this->styles as $style) {
             $href = $this->addVersion($style['href'], $style['version']);
             $output .=
-                sprintf(
-                    '<link rel="stylesheet" type="text/css" href="%s">',
-                    $href,
-                ) . PHP_EOL;
+                sprintf('<link rel="stylesheet" type="text/css" href="%s">', $href) . PHP_EOL;
         }
 
         foreach ($this->scripts as $script) {
@@ -286,15 +268,11 @@ class Page
     /**
      * @throws ValueException
      */
-    protected function renderSection(
-        string $sectionTag,
-        string $sectionId,
-    ): string {
+    protected function renderSection(string $sectionTag, string $sectionId): string
+    {
         if (! $this->widgets[$sectionTag]) {
             $goodNames = implode(', ', array_keys($this->widgets));
-            throw new ValueException(
-                'Bad tag name; should be one of: ' . $goodNames,
-            );
+            throw new ValueException('Bad tag name; should be one of: ' . $goodNames);
         }
 
         $output = sprintf('<%s id="%s">', $sectionTag, $sectionId) . PHP_EOL;
@@ -312,8 +290,7 @@ class Page
         $widgetClass = $widget->getClass();
         $widgetVersion = $widget->getVersion();
 
-        $content =
-            sprintf('<%s class="%s">', $widgetTag, $widgetClass) . PHP_EOL;
+        $content = sprintf('<%s class="%s">', $widgetTag, $widgetClass) . PHP_EOL;
 
         // Scripts are qualified by their widget class to avoid conflict.
         foreach ($widget->getScripts() as $scriptName => $src) {
@@ -330,10 +307,7 @@ class Page
         try {
             $content .= $widget->render();
         } catch (\Throwable) {
-            $content .=
-                '<p style="color: red">Error rendering ' .
-                $widget->getName() .
-                '</p>';
+            $content .= '<p style="color: red">Error rendering ' . $widget->getName() . '</p>';
         }
 
         return $content . (sprintf('</%s>', $widgetTag) . PHP_EOL);

@@ -14,13 +14,7 @@ abstract class AbstractWidget
     /**
      * @var list<string>
      */
-    protected static array $validTags = [
-        'article',
-        'aside',
-        'div',
-        'nav',
-        'section',
-    ];
+    protected static array $validTags = ['article', 'aside', 'div', 'nav', 'section'];
 
     /**
      * @var array<string, string>
@@ -56,21 +50,17 @@ abstract class AbstractWidget
             throw new ValueException('Missing name');
         }
 
-        if (preg_match('/^\\d+\\.\\d+(\\.\\d+)?$/', $this->version) === 0) {
-            throw new ValueException(
-                'Invalid semantic version: ' . $this->version,
-            );
+        if (preg_match('/^\d+\.\d+(\.\d+)?$/', $this->version) === 0) {
+            throw new ValueException('Invalid semantic version: ' . $this->version);
         }
 
         $this->tag = strtolower($this->tag);
         if (! in_array($this->tag, self::$validTags, true)) {
             $validTags = implode(', ', self::$validTags);
-            throw new ValueException(
-                'Bad tag; should be one of: ' . $validTags,
-            );
+            throw new ValueException('Bad tag; should be one of: ' . $validTags);
         }
 
-        if (preg_match('/^\\w+(-\\w+)*$/', $this->class) === 0) {
+        if (preg_match('/^\w+(-\w+)*$/', $this->class) === 0) {
             throw new ValueException('Invalid class name: ' . $this->class);
         }
     }
@@ -125,11 +115,7 @@ abstract class AbstractWidget
     {
         if (isset($this->scripts[$name])) {
             throw new ValueException(
-                'Script "' .
-                    $name .
-                    '" already set: "' .
-                    $this->scripts[$name] .
-                    '"',
+                'Script "' . $name . '" already set: "' . $this->scripts[$name] . '"',
             );
         }
 
@@ -141,11 +127,7 @@ abstract class AbstractWidget
     {
         if (isset($this->styles[$name])) {
             throw new ValueException(
-                'Style "' .
-                    $name .
-                    '" already set: "' .
-                    $this->styles[$name] .
-                    '"',
+                'Style "' . $name . '" already set: "' . $this->styles[$name] . '"',
             );
         }
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DouglasGreen\PageMaker;
 
-use DouglasGreen\Utility\Exceptions\Data\ValueException;
+use DouglasGreen\Utility\Data\ValueException;
 
 /**
  * A widget can extend this class.

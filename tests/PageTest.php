@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DouglasGreen\PageMaker\Tests;
 
-use DouglasGreen\Utility\Exceptions\Data\ValueException;
+use DouglasGreen\Utility\Data\ValueException;
 use DouglasGreen\PageMaker\Page;
 use PHPUnit\Framework\TestCase;
 

@@ -15,27 +15,21 @@ namespace DouglasGreen\PageMaker;
  *   print_r($args);
  * }
  */
-class Router {
-    /**
-     * @var array<string, mixed>
-     */
-    protected array $args;
-    protected string $base;
-    protected string $name;
-    protected string $path;
-
+class Router
+{
     /**
      * @param array<string, mixed> $args
      */
-    public function __construct(string $base, string $path, string $name, array $args = []) {
-        $this->base = $base;
-        $this->path = $path;
-        $this->name = $name;
-        $this->args = $args;
-    }
+    public function __construct(
+        protected string $base,
+        protected string $path,
+        protected string $name,
+        protected array $args = [],
+    ) {}
 
-    public function dispatch(): void {
-        $url = $this->getFullUrl();
+    public function dispatch(): void
+    {
+        $this->getFullUrl();
         $name = $this->getName();
         $args = $this->getArgs();
 
@@ -47,22 +41,25 @@ class Router {
         if (function_exists($name)) {
             call_user_func($name, $args);
         } else {
-            echo "Service $name not found.";
+            echo sprintf('Service %s not found.', $name);
         }
     }
 
-    public function getFullUrl(): string {
+    public function getFullUrl(): string
+    {
         return rtrim($this->base, '/') . '/' . ltrim($this->path, '/');
     }
 
-    public function getName(): string {
+    public function getName(): string
+    {
         return $this->name;
     }
 
     /**
      * @return array<string, mixed>
      */
-    public function getArgs(): array {
+    public function getArgs(): array
+    {
         return $this->args;
     }
 }

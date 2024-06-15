@@ -105,9 +105,11 @@ class HtmlWidgetTest extends TestCase
     {
         $htmlWidget = new HtmlWidget('MyWidget', '1.0.0', 'div', 'my-widget-class');
         $htmlWidget->setScript('script1', 'src1');
-        $this->assertSame([
+
+        $expected = [
             'script1' => 'src1',
-        ], $htmlWidget->getScripts(),);
+        ];
+        $this->assertSame($expected, $htmlWidget->getScripts());
     }
 
     public function testSetScriptAlreadySet(): void
@@ -123,9 +125,11 @@ class HtmlWidgetTest extends TestCase
     {
         $htmlWidget = new HtmlWidget('MyWidget', '1.0.0', 'div', 'my-widget-class');
         $htmlWidget->setStyle('style1', 'href1');
-        $this->assertSame([
+
+        $expected = [
             'style1' => 'href1',
-        ], $htmlWidget->getStyles(),);
+        ];
+        $this->assertSame($expected, $htmlWidget->getStyles());
     }
 
     public function testSetStyleAlreadySet(): void
